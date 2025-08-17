@@ -1,0 +1,27 @@
+<testsuite name="login.Login en SauceDemo" tests="2" errors="0" failures="0" skipped="0" time="1.677099" timestamp="2025-08-17T16:39:34.550231" hostname="Jhoaos-MacBook-Pro.local"><testcase classname="login.Login en SauceDemo" name="Login exitoso" status="passed" time="1.388008"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @ui
+  Scenario: Login exitoso
+    Given que estoy en la página de login ... passed in 1.062s
+    When inicio sesión con usuario "standard_user" y clave "secret_sauce" ... passed in 0.318s
+    Then debería ver el inventario ... passed in 0.008s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="login.Login en SauceDemo" name="Login inválido muestra error" status="passed" time="0.289091"><system-out>
+<![CDATA[
+@scenario.begin
+
+  @ui
+  Scenario: Login inválido muestra error
+    Given que estoy en la página de login ... passed in 0.035s
+    When inicio sesión con usuario "usuario_falso" y clave "clave_incorrecta" ... passed in 0.241s
+    Then debería ver un mensaje de error que contiene "Username and password do not match" ... passed in 0.013s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>
