@@ -1,0 +1,5 @@
+behave==1.2.6
+selenium==4.35.0
+webdriver-manager==4.0.2
+python-dotenv==1.0.1
+allure-behave>=2.13,<3
