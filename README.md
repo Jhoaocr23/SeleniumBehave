@@ -4,7 +4,7 @@ Proyecto base para pruebas E2E usando **Behave** (BDD), **Selenium WebDriver**, 
 
 ---
 
-## 📁 Estructura sugerida
+## 📁 Estructura 
 ```
 webAutomation/
 ├─ features/
@@ -58,7 +58,7 @@ SCREENSHOTS_EVERY_STEP=true
 - **POM**: `pages/login_page.py` contiene localizadores y acciones de la página de login.
 - **Steps**: `features/steps/login_steps.py` mapea Given/When/Then al POM.
 - **Hooks**: `environment.py` levanta/cierra el navegador por escenario y adjunta screenshots a Allure.
-- **Feature**: `features/login.feature` con escenarios de login exitoso y error.
+- **Feature**: `features/login.feature` con escenarios de login exitoso y de error.
 
 ---
 
@@ -140,6 +140,41 @@ python -m behave features/login.feature -f "allure_behave.formatter:AllureFormat
 - **`TypeError: ... Path(..., NoneType)`**: Asegúrate de que `-o` se aplique al formateador **Allure** y no a `pretty`. Usa el orden: `-f allure_behave.formatter:AllureFormatter -o reports/allure-results -f pretty` o configura `behave.ini`.
 - **`FileExistsError: ... reports/allure-results`**: Si existe **un archivo** con ese nombre, elimínalo y crea el directorio: `rm -f reports/allure-results && mkdir -p reports/allure-results`.
 - **`zsh: parse error near ')'`**: Evita pegar comentarios o caracteres especiales; usa comillas en el nombre del formateador.
+- **Comentarios en línea del INI**: No pongas comentarios al final de la línea (p. ej., `format = pretty  # comentario`). Haz el comentario en su propia línea.
+
+---
+
+## 🚦 CI/CD (GitHub Actions)
+**Workflow:** `.github/workflows/behave-allure.yml`
+
+**¿Qué hace?**
+- Instala dependencias y configura Chrome headless.
+- Ejecuta `behave` con el formateador de **Allure** para generar `reports/allure-results`.
+- Genera el **HTML** de Allure en `reports/allure-report`.
+- Sube el reporte como **artifact** y, en `push`, lo publica en **GitHub Pages**.
+
+**Variables usadas en el workflow**
+```
+BROWSER=chrome
+HEADLESS=true
+ALLURE_RESULTS_DIR=reports/allure-results
+ALLURE_REPORT_DIR=reports/allure-report
+```
+
+**Cómo ver resultados en CI**
+- **Artifact:** “allure-report” (descargable desde la pestaña del job).
+- **GitHub Pages (en push):** el enlace queda en el *Run summary* del workflow.
+
+**Ejecutar lo mismo en local**
+```bash
+python -m behave -f "allure_behave.formatter:AllureFormatter" -o reports/allure-results -f pretty
+allure serve reports/allure-results
+```
+
+**Badge opcional (reemplaza OWNER/REPO y archivo .yml si difiere):**
+```md
+![CI](https://github.com/OWNER/REPO/actions/workflows/behave-allure.yml/badge.svg)
+```
 
 ---
 
