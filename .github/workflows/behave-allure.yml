@@ -2,6 +2,16 @@ name: Behave + Selenium + Allure
 
 on: [push, pull_request]
 
+# Recomendado para Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -32,13 +42,40 @@ jobs:
           python -m behave -f allure_behave.formatter:AllureFormatter -o "$ALLURE_RESULTS_DIR" -f pretty
 
       - name: Generate Allure HTML report
-        uses: simple-elf/allure-report-action@v1.7
+        if: always()
+        uses: simple-elf/allure-report-action@v1.13
         with:
           allure_results: ${{ env.ALLURE_RESULTS_DIR }}
-          allure_report: ${{ env.ALLURE_REPORT_DIR }}
+          allure_report:  ${{ env.ALLURE_REPORT_DIR }}
 
-      - name: Upload Allure HTML report
+      - name: Debug: list report content
+        if: always()
+        run: |
+          echo "PWD=$(pwd)"
+          ls -la "${ALLURE_RESULTS_DIR}" || true
+          ls -la "${ALLURE_REPORT_DIR}"  || true
+
+      - name: Upload Allure HTML report (artifact)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: ${{ env.ALLURE_REPORT_DIR }}
+
+      - name: Upload Pages artifact
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.ALLURE_REPORT_DIR }}
+
+  deploy:
+    if: ${{ github.event_name == 'push' }}
+    needs: tests
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
