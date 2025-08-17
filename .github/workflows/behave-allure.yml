@@ -66,6 +66,7 @@ jobs:
           name: allure-report
           path: ${{ env.ALLURE_REPORT_DIR }}
 
+      # Artifact para GitHub Pages (nombre por defecto: github-pages)
       - name: Upload Pages artifact
         if: ${{ github.event_name == 'push' }}
         uses: actions/upload-pages-artifact@v3
@@ -77,6 +78,9 @@ jobs:
     needs: tests
     runs-on: ubuntu-latest
     steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
